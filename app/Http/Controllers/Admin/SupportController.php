@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Support;
+use App\Services\SupportService;
 
 class SupportController extends Controller
 {
-    public function index(Support $support){
+
+    public function __construct(protected SupportService $service){
+
+    }
+
+    public function index(Request $request){
         
-        //Aplicando injeccao de dependecias 
-        $supports = $support->all();
-        //dd($supports);
+
+        $supports = $this->service->getAll($request->filter);
 
         return view('admin/supports/index',compact('supports'));
     }
@@ -31,23 +36,23 @@ class SupportController extends Controller
         return redirect()->route('supports.index');
     }
 
-    public function show(string|int $id){
+    public function show(string $id){
 
         //Support::where('id',$id)->first()
         //Support::where('id','!=',$id)->first()
-        if( !$support = Support::find($id) )
+        if( !$support = $this->service->findOne($id) )
         {
             return back();
         }
-        //dd($id);
 
         return view('admin/supports/show',compact('support'));
     }
 
-    public function edit(Support $support,string|int $id)
+    public function edit(string $id)
     {
 
-        if(!$support = $support->where('id',$id)->first()){
+        //if(!$support = $support->where('id',$id)->first()){
+        if(!$support = $this->service->findOne($id)){
             return back();
         }
 
