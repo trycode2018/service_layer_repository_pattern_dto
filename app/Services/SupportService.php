@@ -1,12 +1,17 @@
 <?php
 
-    namespace App\Http\Services;
+    namespace App\Services;
+
+    use App\DTO\CreateSupportDTO;
+    use App\DTO\UpdateSupportDTO;
+    use App\Repositories\SupportRepositoryInterface;
 
     class SupportService {
 
-        protected $repository;
 
-        public function __construct(){
+        public function __construct(
+            protected SupportRepositoryInterface $repository
+        ){
 
         }   
 
@@ -14,11 +19,12 @@
         {
             return $this->repository->getAll($filter);
         }
+
         public function findOne(string $id):stdClass|null{
             return $this->repository->findOne($id);
         }
 
-        public function new(string $subject,string $body,string $status):stdClass
+        public function new(CreateSupportDTO $dto):stdClass
         {
             return $this->repository->new(
                 $subject,
@@ -27,12 +33,7 @@
             );
         }
 
-        public function update(
-            string $id,
-            string $subject,
-            string $body,
-            string $status
-        ):stdClass|null{
+        public function update(UpdateSupportDTO $dto):stdClass|null{
             return $this->repository->update($id,$subject,$body,$status);
         }
 
